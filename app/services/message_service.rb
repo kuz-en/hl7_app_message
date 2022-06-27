@@ -9,7 +9,7 @@ class MessageService
     translit_name(@patient)
     translit_name(@technician)
     create_message
-    # broadcast_message
+    broadcast_message
   end
 
   private
