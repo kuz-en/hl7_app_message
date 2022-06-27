@@ -23,10 +23,10 @@ class MessageService
   def create_message
     @message = SimpleHL7::Message.new(segment_separator: "\r\n")
     @message.msh[4][1] = 'MRTEXPERT'
-    @message.msh[9][1][1] = 'ORM'
-    @message.msh[9][2][1] = 'O01'
-    @message.msh[11][1][1] = 'P'
-    @message.msh[12][1][1] = '2.3'
+    @message.msh[9][1] = 'ORM'
+    @message.msh[9][2] = 'O01'
+    @message.msh[11][1] = 'P'
+    @message.msh[12][1] = '2.3'
     @message.msh[19][1] = ''
 
     @message.pid[5][1] = "#{@patient.lastname} #{@patient.firstname.first}#{@patient.middlename.first}".upcase
