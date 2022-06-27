@@ -1,24 +1,5 @@
 class MessageService
-  Patient = Struct.new(:firstname, :middlename, :lastname, :birth_date, :sex, keyword_init: true)
-  Request = Struct.new(:uid, :scheduled_at, :service_abbr, :dicom_id, :dicom_uid, keyword_init: true)
-  Technician = Struct.new(:firstname, :middlename, :lastname, keyword_init: true)
-
-  def initialize(patient = Patient.new(firstname: 'Александр',
-                                       middlename: 'Михайлович',
-                                       lastname: 'Тулузаков',
-                                       birth_date: Date.new(1950, 1, 21),
-                                       sex: 'm'),
-
-                 request = Request.new(uid: '85792_smol',
-                                       scheduled_at: DateTime.new(2019, 6, 21, 16, 5, 0),
-                                       service_abbr: 'L-spine',
-                                       dicom_id: 'SMK00445657_1',
-                                       dicom_uid: '1.3.12.2.1107.5.2.6.24133.69992.2019062145261830715'),
-
-                 technician = Technician.new(firstname: 'Людмила',
-                                             middlename: 'Викторовна',
-                                             lastname: 'Щербакова'))
-
+  def initialize(patient, request, technician)
     @patient = patient
     @request = request
     @technician = technician
@@ -28,7 +9,7 @@ class MessageService
     translit_name(@patient)
     translit_name(@technician)
     create_message
-    broadcast_message
+    # broadcast_message
   end
 
   private
@@ -50,9 +31,9 @@ class MessageService
 
     @message.pid[5][1] = "#{@patient.lastname} #{@patient.firstname.first}#{@patient.middlename.first}".upcase
     @message.pid[7][1] = @patient.birth_date.strftime('%Y%m%d')
-    @message.pid[3][1] = "#{@request.uid}"
+    @message.pid[3][1] = @request.uid.to_s
     @message.pid[3][4][2] = 'MIAS'
-    @message.pid[8][1] = "#{@patient.sex}".upcase
+    @message.pid[8][1] = @patient.sex.to_s.upcase
     @message.pid[10][1] = '0'
     @message.pid[16][1] = ''
 
@@ -77,6 +58,8 @@ class MessageService
     @message.pv1[8][2] = ''
     @message.pv1[9][1] = 'True'
     @message.pv1[9][2] = ''
+
+    @message.to_hl7
   end
 
   def broadcast_message
